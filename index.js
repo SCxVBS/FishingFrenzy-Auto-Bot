@@ -137,7 +137,7 @@ function updateHeaderBanner() {
  const color = colors[index % colors.length];
  const colorName = color.slice(1, -1);
  return `{center}${color}${line}{/${colorName}}{/center}`;
- }).join("\n");
+ }).join("\n"); 
 
  const descriptionText = "{center}{bold}{yellow-fg}✦ Auto Fishing & Task Bot ✦{/yellow-fg}{/bold}{/center}";
  headerBox.setContent(`${content}\n${descriptionText}`);
@@ -155,9 +155,7 @@ function startHeaderAnimation() {
 // ASCII art frames for fishing animation
 const fishingFrames = [
  // Casting...
- `{center}{cyan-fg} _____ __ _ 
- / ___/__ ____ / /_(_)__ ___ _
-/ /__/ _ \`(_-</ __/ / _ \\/ _ \`/
+ `{center}{cyan-fg} _____ __ _   / ___/__ ____ / /_(_)__ ___ _ / /__/ _ \(_-</ __/ / _ \\/ _ \`/
 \\___/\\_,_/___/\\__/_/_//_/\\_, / 
  /___/ 
  Casting...{/cyan-fg}{/center}`,
@@ -310,6 +308,35 @@ const inventoryMenu = blessed.list({
  hidden: true,
 });
 
+// Event Menu - Menambahkan menu untuk Auto Fishing Event
+const eventMenu = blessed.list({
+ parent: menuContainer,
+ top: 0,
+ left: 0,
+ width: "100%",
+ height: "100%",
+ keys: true,
+ mouse: true,
+ vi: true,
+ border: { type: "line" },
+ tags: true,
+ padding: { left: 1, right: 1 },
+ style: {
+ border: { fg: "yellow" },
+ bg: "#1a1a1a",
+ item: { fg: "white" },
+ selected: { bg: "cyan", fg: "black", bold: true },
+ hover: { bg: "gray" }
+ },
+ items: [
+ "{bold}Auto Fishing Event Theme{/bold}",
+ "{bold}Auto Fishing Event{/bold}",
+ "{bold}Auto Fishing Original Theme{/bold}",
+ "{bold}Back{/bold}",
+ ],
+ hidden: true,
+});
+
 // Prompt untuk input jumlahПоиск Sushi (untuk penggunaan)
 const sushiPromptBox = blessed.prompt({
  parent: screen,
@@ -371,6 +398,7 @@ screen.append(headerBox);
 screen.append(logsBox);
 screen.append(userInfoBox);
 screen.append(menuContainer);
+screen.append(eventMenu); // Tambahkan menu Event ke screen
 
 function safeRender() {
  setTimeout(() => screen.render(), 50);
@@ -460,6 +488,7 @@ function updateMenuItems() {
  "{gray-fg}Buy Sushi in Shop{/gray-fg}",
  "{gray-fg}Open Inventory{/gray-fg}",
  "{gray-fg}Changed account{/gray-fg}",
+ "{gray-fg}Auto Fishing Event{/gray-fg}", // Mengganti nama menu "Switch Event" menjadi "Auto Fishing Event"
  "Clear Logs",
  "Stop Process",
  "Refresh",
@@ -473,6 +502,7 @@ function updateMenuItems() {
  "Buy Sushi in Shop",
  "Open Inventory",
  "Changed account",
+ "Auto Fishing Event", // Mengganti nama menu "Switch Event" menjadi "Auto Fishing Event"
  "Clear Logs",
  "Refresh",
  "Exit"
@@ -634,6 +664,108 @@ async function processSushiPurchase(quantity) {
  await buySushi(activeToken, userProfile.id, quantity);
  } else {
  addLog("{red-fg}Failed to fetch user profile for buying Sushi.{/red-fg}");
+ }
+}
+
+// Switch Event Functions
+async function switchToEventTheme() {
+ try {
+   addLog("{yellow-fg}Mengganti ke Event Theme...{/yellow-fg}");
+   const response = await fetch("https://api.fishingfrenzy.co/v1/events/6809a675a27bdd9f98123e90/themes/6809a66da27bdd9f98123e16/switch", {
+     "headers": {
+       "accept": "application/json",
+       "accept-language": "en-US,en;q=0.9",
+       "authorization": `Bearer ${activeToken}`,
+       "content-type": "application/json",
+       "if-none-match": "W/\"250f-Kc8Irrw+AC44UzZfphcFMm5XqtI\"",
+       "priority": "u=1, i",
+       "sec-ch-ua": "\"Google Chrome\";v=\"135\", \"Not-A.Brand\";v=\"8\", \"Chromium\";v=\"135\"",
+       "sec-ch-ua-mobile": "?0",
+       "sec-ch-ua-platform": "\"Windows\"",
+       "sec-fetch-dest": "empty",
+       "sec-fetch-mode": "cors",
+       "sec-fetch-site": "same-site",
+       "Referer": "https://fishingfrenzy.co/",
+       "Referrer-Policy": "strict-origin-when-cross-origin"
+     },
+     "body": null,
+     "method": "GET"
+   });
+   
+   if (response.ok) {
+     addLog("{green-fg}Berhasil switch ke Event Theme!{/green-fg}");
+   } else {
+     addLog("{red-fg}Gagal switch ke Event Theme. Status: " + response.status + "{/red-fg}");
+   }
+ } catch (error) {
+   addLog(`{red-fg}Error saat switch ke Event Theme: ${error.message}{/red-fg}`);
+ }
+}
+
+async function switchToEvent() {
+ try {
+   addLog("{yellow-fg}Mengganti ke Event...{/yellow-fg}");
+   const response = await fetch("https://api.fishingfrenzy.co/v1/events/6809a675a27bdd9f98123e90/switch", {
+     "headers": {
+       "accept": "application/json",
+       "accept-language": "en-US,en;q=0.9",
+       "authorization": `Bearer ${activeToken}`,
+       "content-type": "application/json",
+       "priority": "u=1, i",
+       "sec-ch-ua": "\"Google Chrome\";v=\"135\", \"Not-A.Brand\";v=\"8\", \"Chromium\";v=\"135\"",
+       "sec-ch-ua-mobile": "?0",
+       "sec-ch-ua-platform": "\"Windows\"",
+       "sec-fetch-dest": "empty",
+       "sec-fetch-mode": "cors",
+       "sec-fetch-site": "same-site",
+       "Referer": "https://fishingfrenzy.co/",
+       "Referrer-Policy": "strict-origin-when-cross-origin"
+     },
+     "body": null,
+     "method": "GET"
+   });
+   
+   if (response.ok) {
+     addLog("{green-fg}Berhasil switch ke Event!{/green-fg}");
+   } else {
+     addLog("{red-fg}Gagal switch ke Event. Status: " + response.status + "{/red-fg}");
+   }
+ } catch (error) {
+   addLog(`{red-fg}Error saat switch ke Event: ${error.message}{/red-fg}`);
+ }
+}
+
+async function switchToOriginalTheme() {
+ try {
+   addLog("{yellow-fg}Mengganti ke Original Theme...{/yellow-fg}");
+   const response = await fetch("https://api.fishingfrenzy.co/v1/events/6809a675a27bdd9f98123e90/themes/6752b7a7ef93f2489cfef709/switch", {
+     "headers": {
+       "accept": "application/json",
+       "accept-language": "en-US,en;q=0.9",
+       "authorization": `Bearer ${activeToken}`,
+       "content-type": "application/json",
+       "if-none-match": "W/\"2dbe-XW+ekLQQjRqJUphsPOy7OvPawU8\"",
+       "priority": "u=1, i",
+       "sec-ch-ua": "\"Google Chrome\";v=\"135\", \"Not-A.Brand\";v=\"8\", \"Chromium\";v=\"135\"",
+       "sec-ch-ua-mobile": "?0",
+       "sec-ch-ua-platform": "\"Windows\"",
+       "sec-fetch-dest": "empty",
+       "sec-fetch-mode": "cors",
+       "sec-fetch-site": "same-site",
+       "Referer": "https://fishingfrenzy.co/",
+       "Referrer-Policy": "strict-origin-when-cross-origin"
+     },
+     "body": null,
+     "method": "GET"
+   });
+   
+   if (response.ok) {
+     addLog("{green-fg}Berhasil switch ke Original Theme!{/green-fg}");
+   } else {
+     addLog("{red-fg}Gagal switch ke Original Theme. Status: " + response.status + "{/red-fg}");
+   }
+ } catch (error) {
+   addLog(`{red-fg}Error saat switch ke Original Theme: ${error.message}{/red-fg}`);
  }
 }
 
@@ -805,6 +937,7 @@ async function fish(range) {
  if (ws.readyState === WebSocket.OPEN) ws.close();
  resolve(false);
  }, 30000);
+
  ws.on('open', () => {
  ws.send(JSON.stringify({
  cmd: 'prepare',
@@ -812,6 +945,7 @@ async function fish(range) {
  is5x: false
  }));
  });
+
  ws.on('message', (data) => {
  try {
  const message = JSON.parse(data.toString());
@@ -847,6 +981,7 @@ async function fish(range) {
  finalFrames.push(keyFrames[i]);
  }
  }
+
  const endCommand = {
  cmd: 'end',
  rep: { fs: 100, ns: 200, fps: 20, frs: finalFrames },
@@ -872,11 +1007,13 @@ async function fish(range) {
  addLog(`{red-fg}Error parsing WS message: ${err.message}{/red-fg}`);
  }
  });
+
  ws.on('error', (error) => {
  clearTimeout(timeout);
  addLog(`{red-fg}WebSocket error: ${error.message}{/red-fg}`);
  resolve(false);
  });
+
  ws.on('close', () => {
  clearTimeout(timeout);
  if (!gameStarted) resolve(false);
@@ -900,9 +1037,11 @@ function showCountdown(seconds) {
  fg: 'yellow'
  }
  });
+
  let remaining = seconds;
  countdownBox.setContent(`{yellow-fg}Countdown: ${remaining} seconds{/yellow-fg}`);
  screen.render();
+
  const interval = setInterval(() => {
  remaining--;
  if (remaining >= 0) {
@@ -921,14 +1060,15 @@ function showCountdown(seconds) {
 
 async function processFishing(range, energyCost, times) {
  addLog(`{yellow-fg}Auto Fishing started:{/yellow-fg} {bold}{cyan-fg}${range}{/cyan-fg}{/bold} for {bold}{cyan-fg}${times}{/cyan-fg}{/bold} times`);
+
  for (let i = 1; i <= times; i++) {
  if (autoProcessCancelled) {
  addLog("{yellow-fg}Auto Fishing Cancelled.{/yellow-fg}");
  stopFishingAnimation();
  break;
  }
- addLog(`{yellow-fg}Fishing at range{/yellow-fg} {bold}{cyan-fg}${range}{/cyan-fg}{/bold} ({bold}{cyan-fg}${energyCost} Energy{/cyan-fg}{/bold})`);
 
+ addLog(`{yellow-fg}Fishing at range{/yellow-fg} {bold}{cyan-fg}${range}{/cyan-fg}{/bold} ({bold}{cyan-fg}${energyCost} Energy{/cyan-fg}{/bold})`);
  startFishingAnimation();
 
  let success = false;
@@ -946,12 +1086,15 @@ async function processFishing(range, energyCost, times) {
  } else {
  addLog("{red-fg}Fishing failed.{/red-fg}");
  }
+
  await updateUserInfo();
  addLog(`{green-fg}Fishing completed ${i}/${times}{/green-fg}`);
+
  if (i < times && !autoProcessCancelled) {
  await showCountdown(5);
  }
  }
+
  addLog(`{green-fg}Auto Fishing finished: ${range}{/green-fg}`);
  autoFishingRunning = false;
  updateMenuItems();
@@ -975,6 +1118,7 @@ function showFishingPopup() {
  bg: '#1a1a1a'
  }
  });
+
  const fishingList = blessed.list({
  parent: fishingContainer,
  top: 1,
@@ -995,6 +1139,7 @@ function showFishingPopup() {
  hover: { bg: 'gray' }
  }
  });
+
  const cancelButton = blessed.button({
  parent: fishingContainer,
  bottom: 1,
@@ -1011,16 +1156,21 @@ function showFishingPopup() {
  hover: { bg: 'darkred' }
  }
  });
+
  fishingList.focus();
  screen.render();
+
  fishingList.on('select', (item, index) => {
  fishingContainer.destroy();
  screen.render();
+
  let range, energyCost;
  if (index === 0) { range = 'Short Range'; energyCost = 1; }
  else if (index === 1) { range = 'Mid Range'; energyCost = 2; }
  else if (index === 2) { range = 'Long Range'; energyCost = 3; }
+
  addLog(`{yellow-fg}Range selected:{/yellow-fg} {bold}{cyan-fg}${range}{/cyan-fg}{/bold} (Cost: {bold}{cyan-fg}${energyCost}{/cyan-fg}{/bold} Energy)`);
+
  fishingPromptBox.setFront();
  screen.render();
  fishingPromptBox.readInput("Enter number of fishing attempts:", "", async (err, value) => {
@@ -1031,6 +1181,7 @@ function showFishingPopup() {
  screen.render();
  return;
  }
+
  const times = parseInt(value);
  if (isNaN(times) || times <= 0) {
  addLog("{red-fg}Invalid input. Auto Fishing cancelled.{/red-fg}");
@@ -1039,6 +1190,7 @@ function showFishingPopup() {
  screen.render();
  return;
  }
+
  const totalCost = energyCost * times;
  if (totalCost > currentEnergy) {
  addLog(`{yellow-fg}Not enough energy!{/yellow-fg} Available: {red-fg}${currentEnergy}{/red-fg}, Required: {green-fg}${totalCost}{/green-fg}`);
@@ -1047,6 +1199,7 @@ function showFishingPopup() {
  screen.render();
  return;
  }
+
  autoProcessCancelled = false;
  autoFishingRunning = true;
  updateMenuItems();
@@ -1056,6 +1209,7 @@ function showFishingPopup() {
  await processFishing(range, energyCost, times);
  });
  });
+
  cancelButton.on('press', () => {
  fishingContainer.destroy();
  addLog("{yellow-fg}Auto Fishing cancelled.{/yellow-fg}");
@@ -1064,6 +1218,7 @@ function showFishingPopup() {
  mainMenu.focus();
  screen.render();
  });
+
  fishingContainer.key(['escape'], () => {
  fishingContainer.destroy();
  addLog("{yellow-fg}Auto Fishing cancelled.{/yellow-fg}");
@@ -1082,17 +1237,20 @@ async function changedAccount() {
  .split("\n")
  .map(line => line.trim())
  .filter(line => line !== "");
+
  if (allTokens.length === 0) {
  addLog("{red-fg}No accounts found in token.txt{/red-fg}");
  accountPromptActive = false;
  return;
  }
+
  const reqHeaders = getRequestHeaders(activeToken);
  const accountPromises = allTokens.map(token =>
  fetch("https://api.fishingfrenzy.co/v1/users/me", { headers: { ...reqHeaders, 'authorization': `Bearer ${token}` } })
  .then(res => res.ok ? res.json() : null)
  .catch(() => null)
  );
+
  const accounts = await Promise.all(accountPromises);
  const accountItems = accounts.map((acc, index) => {
  if (acc) {
@@ -1102,6 +1260,7 @@ async function changedAccount() {
  }
  return { token: allTokens[index], label: `Invalid Account ${index + 1}` };
  });
+
  const accountList = blessed.list({
  parent: screen,
  top: "center",
@@ -1121,12 +1280,15 @@ async function changedAccount() {
  hover: { bg: "gray" }
  }
  });
+
  screen.append(accountList);
  accountList.focus();
  screen.render();
+
  accountList.on("select", (item, index) => {
  screen.remove(accountList);
  screen.render();
+
  if (accountItems[index] && accountItems[index].label.indexOf("Invalid") === -1) {
  const newToken = accountItems[index].token;
  showProxyPrompt(newToken, accountItems[index].label);
@@ -1166,12 +1328,15 @@ function showProxyPrompt(newToken, accountLabel) {
  hover: { bg: "gray" }
  }
  });
+
  screen.append(proxyPrompt);
  proxyPrompt.focus();
  screen.render();
+
  proxyPrompt.on("select", async (pItem, pIndex) => {
  proxyPrompt.destroy();
  screen.render();
+
  if (pIndex === 1) {
  let proxies = [];
  try {
@@ -1182,6 +1347,7 @@ function showProxyPrompt(newToken, accountLabel) {
  } catch (err) {
  addLog("{red-fg}Error reading proxy.txt{/red-fg}");
  }
+
  if (proxies.length === 0) {
  addLog("{yellow-fg}No proxies found in proxy.txt, proceeding without proxy.{/yellow-fg}");
  activeProxy = null;
@@ -1222,6 +1388,7 @@ function showProxySelection(proxies, newToken, accountLabel) {
  bg: '#1a1a1a'
  }
  });
+
  const proxyList = blessed.list({
  parent: proxyContainer,
  top: 1,
@@ -1238,6 +1405,7 @@ function showProxySelection(proxies, newToken, accountLabel) {
  hover: { bg: 'gray' }
  }
  });
+
  const cancelButton = blessed.button({
  parent: proxyContainer,
  bottom: 1,
@@ -1254,8 +1422,10 @@ function showProxySelection(proxies, newToken, accountLabel) {
  hover: { bg: 'darkred' }
  }
  });
+
  proxyList.focus();
  screen.render();
+
  proxyList.on("select", (pItem, pIndex) => {
  proxyContainer.destroy();
  screen.render();
@@ -1268,6 +1438,7 @@ function showProxySelection(proxies, newToken, accountLabel) {
  screen.render();
  accountPromptActive = false;
  });
+
  cancelButton.on("press", () => {
  proxyContainer.destroy();
  screen.render();
@@ -1291,6 +1462,7 @@ async function buySushiInShop() {
  screen.render();
  return;
  }
+
  const quantity = parseInt(value);
  if (isNaN(quantity) || quantity <= 0) {
  addLog("{red-fg}Invalid input. Sushi purchase cancelled.{/red-fg}");
@@ -1307,54 +1479,46 @@ async function buySushiInShop() {
  });
 }
 
-mainMenu.on("select", async (item) => {
- const text = item.getText();
-
- if ((autoTaskRunning || autoFishingRunning || autoDailyRunning) && text !== "Stop Process") {
- addLog("{yellow-fg}A process is running. Wait or select 'Stop Process'.{/yellow-fg}");
- return;
- }
-
- if (text === "Stop Process") {
- autoProcessCancelled = true;
- addLog("{red-fg}Stop Process received. Stopping...{/red-fg}");
- stopFishingAnimation();
- return;
- }
-
- switch (text) {
- case "Auto Complete Task":
- autoCompleteTask();
- break;
- case "Auto Fishing":
- autoFishing();
- break;
- case "Auto Complete Daily Checkin & Task":
- autoCompleteDailyCheckinAndTask();
- break;
- case "Buy Sushi in Shop":
- buySushiInShop();
- break;
- case "Open Inventory":
- mainMenu.hidden = true;
- inventoryMenu.hidden = false;
- inventoryMenu.focus();
- screen.render();
- break;
- case "Changed account":
- changedAccount();
- break;
- case "Clear Logs":
- clearLogs();
- break;
- case "Refresh":
- updateUserInfo();
- break;
- case "Exit":
- process.exit(0);
- break;
- default:
- addLog("{red-fg}Unknown menu item.{/red-fg}");
+// Event Menu Handler yang telah dimodifikasi
+eventMenu.on('select', async (item, index) => {
+ if (index === 0) { // Auto Fishing Event Theme
+   addLog("{yellow-fg}Memulai proses switch ke Event Theme...{/yellow-fg}");
+   await switchToEventTheme();
+   addLog("{yellow-fg}Mulai Auto Fishing setelah switch ke Event Theme...{/yellow-fg}");
+   eventMenu.hidden = true;
+   mainMenu.hidden = false;
+   mainMenu.focus();
+   screen.render();
+   
+   // Langsung mulai auto fishing
+   showFishingPopup();
+ } else if (index === 1) { // Auto Fishing Event
+   addLog("{yellow-fg}Memulai proses switch ke Event...{/yellow-fg}");
+   await switchToEvent();
+   addLog("{yellow-fg}Mulai Auto Fishing setelah switch ke Event...{/yellow-fg}");
+   eventMenu.hidden = true;
+   mainMenu.hidden = false;
+   mainMenu.focus();
+   screen.render();
+   
+   // Langsung mulai auto fishing
+   showFishingPopup();
+ } else if (index === 2) { // Auto Fishing Original Theme
+   addLog("{yellow-fg}Memulai proses switch ke Original Theme...{/yellow-fg}");
+   await switchToOriginalTheme();
+   addLog("{yellow-fg}Mulai Auto Fishing setelah switch ke Original Theme...{/yellow-fg}");
+   eventMenu.hidden = true;
+   mainMenu.hidden = false;
+   mainMenu.focus();
+   screen.render();
+   
+   // Langsung mulai auto fishing
+   showFishingPopup();
+ } else if (index === 3) { // Back
+   eventMenu.hidden = true;
+   mainMenu.hidden = false;
+   mainMenu.focus();
+   screen.render();
  }
 });
 
@@ -1408,6 +1572,63 @@ inventoryMenu.on('select', async (item, index) => {
  }
 });
 
+mainMenu.on('select', async (item) => {
+ const text = item.getText();
+
+ if ((autoTaskRunning || autoFishingRunning || autoDailyRunning) && text !== "Stop Process") {
+ addLog("{yellow-fg}A process is running. Wait or select 'Stop Process'.{/yellow-fg}");
+ return;
+ }
+
+ if (text === "Stop Process") {
+ autoProcessCancelled = true;
+ addLog("{red-fg}Stop Process received. Stopping...{/red-fg}");
+ stopFishingAnimation();
+ return;
+ }
+
+ switch (text) {
+ case "Auto Complete Task":
+ autoCompleteTask();
+ break;
+ case "Auto Fishing":
+ autoFishing();
+ break;
+ case "Auto Complete Daily Checkin & Task":
+ autoCompleteDailyCheckinAndTask();
+ break;
+ case "Buy Sushi in Shop":
+ buySushiInShop();
+ break;
+ case "Open Inventory":
+ mainMenu.hidden = true;
+ inventoryMenu.hidden = false;
+ inventoryMenu.focus();
+ screen.render();
+ break;
+ case "Changed account":
+ changedAccount();
+ break;
+ case "Auto Fishing Event":
+ mainMenu.hidden = true;
+ eventMenu.hidden = false;
+ eventMenu.focus();
+ screen.render();
+ break;
+ case "Clear Logs":
+ clearLogs();
+ break;
+ case "Refresh":
+ updateUserInfo();
+ break;
+ case "Exit":
+ process.exit(0);
+ break;
+ default:
+ addLog("{red-fg}Unknown menu item.{/red-fg}");
+ }
+});
+
 screen.key(["escape", "q", "C-c"], () => process.exit(0));
 
 function adjustLayout() {
@@ -1441,4 +1662,7 @@ setTimeout(() => {
  safeRender();
  screen.render();
  changedAccount();
+ 
+ // Tambahkan log tentang fitur baru
+ addLog("{green-fg}Script telah ditambahkan fitur Auto Fishing Event. Silakan gunakan menu 'Auto Fishing Event' untuk menggunakannya.{/green-fg}");
 }, 100); // Penundaan 100ms untuk memastikan semua elemen UI siap
